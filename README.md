@@ -19,7 +19,7 @@
 - Responsive mobile/PC (touch/click)
 
 ## 🌐 Démo Live (GitHub Pages)
-**[Jouer maintenant!](https://hayounions.github.io/projet-dev/)**
+**[Jouer maintenant!](https://hayounions.github.io/ons-hayouni-jeu-reaction-rapide-/)**
 
 ## 🆕 Nouveautés Explorées
 - **Web Audio API** : Génération sons synthétiques sans fichiers
