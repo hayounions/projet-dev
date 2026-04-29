@@ -1,0 +1,72 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial Black', sans-serif;
+    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.container {
+    text-align: center;
+    max-width: 90%;
+    padding: 20px;
+}
+
+h1 {
+    color: #fff;
+    font-size: clamp(2rem, 6vw, 4rem);
+    margin-bottom: 20px;
+}
+
+.game-info p {
+    color: #fff;
+    font-size: clamp(1.1rem, 4vw, 1.4rem);
+    margin: 15px 0;
+}
+
+#start-btn {
+    background: linear-gradient(45deg, #ff00ff, #00ffff);
+    color: #000;
+    border: none;
+    padding: 15px 30px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border-radius: 50px;
+    cursor: pointer;
+    margin: 25px 0;
+}
+
+.game-screen {
+    width: clamp(220px, 75vw, 450px);
+    height: clamp(220px, 75vw, 450px);
+    margin: 30px auto;
+    border-radius: 25px;
+    border: 6px solid #fff;
+    cursor: pointer;
+    transition: all 0.6s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.instructions {
+    color: white;
+    margin-top: 25px;
+}
