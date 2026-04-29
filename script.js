@@ -2,6 +2,8 @@ let startBtn, status, lastTimeEl, bestTimeEl, gameScreen;
 let gameState = 'idle';
 let startTime = 0;
 let bestTime = Infinity;
+let fakeButtons = [];
+const bluffTexts = ['Attends encore...', 'Faux!', 'Piège?', 'Pas maintenant!', 'Bluff!'];
 
 document.addEventListener('DOMContentLoaded', init);
 
@@ -13,6 +15,7 @@ function init() {
     gameScreen = document.getElementById('game-screen');
     
     startBtn.addEventListener('click', startGame);
+    randomButtonPos();
     gameScreen.addEventListener('click', handleReaction);
     gameScreen.addEventListener('touchstart', handleReaction, { passive: false });
 }
@@ -23,6 +26,39 @@ function initAudio() {
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
     }
 }
+function randomButtonPos() {
+    if (!startBtn) return;
+    const x = Math.random() * 60 + 20;
+    const y = Math.random() * 30 + 20;
+    startBtn.style.position = 'absolute';
+    startBtn.style.left = x + '%';
+    startBtn.style.top = y + '%';
+    startBtn.style.transform = 'translate(-50%, -50%)';
+}
+function createFakeButton() {
+    const btn = document.createElement('button');
+    btn.className = 'fake-btn';
+    btn.innerText = bluffTexts[Math.floor(Math.random() * bluffTexts.length)];
+    btn.style.position = 'absolute';
+    btn.style.left = (15 + Math.random() * 70) + '%';
+    btn.style.top = (15 + Math.random() * 70) + '%';
+    gameScreen.appendChild(btn);
+    fakeButtons.push(btn);
+}
+
+function clearFakes() {
+    fakeButtons.forEach(btn => btn && btn.remove());
+    fakeButtons = [];
+}
+
+function handleBluff(btn) {
+    playTone(350, 0.6, 'sawtooth');
+    status.textContent = 'BLUFF! Piège détecté!';
+    btn.remove();
+    fakeButtons = fakeButtons.filter(b => b !== btn);
+    setTimeout(() => resetGame(), 2000);
+}
+
 
 function playTone(frequency, duration = 0.2, type = 'sine') {
     initAudio();
@@ -47,19 +83,44 @@ function startGame() {
     status.textContent = 'Attendez le signal...';
     startBtn.style.display = 'none';
     gameScreen.style.background = '#ffa502';
+    clearFakes();
     
     const waitTime = 2000 + Math.random() * 3000;
     setTimeout(() => {
         if (gameState === 'waiting') {
-            playTone(1200, 0.5);
-            gameState = 'signal';
-            startTime = performance.now();
-            gameScreen.style.background = '#00ff88';
-            status.textContent = 'CLIQUEZ!';
+            gameState = 'ready';
+            status.textContent = 'PRET! Ignorez les boutons pièges!';
+            // Add troll buttons
+            const numTraps = 2 + Math.floor(Math.random() * 3);
+            for(let i = 0; i < numTraps; i++) {
+                setTimeout(() => createFakeButton(), i * 500);
+            }
+            
+            setTimeout(() => {
+                if (gameState === 'ready') {
+                    playTone(1200, 0.5);
+                    gameState = 'signal';
+                    startTime = performance.now();
+                    gameScreen.style.background = '#00ff88';
+                    status.textContent = 'CLIQUEZ!';
+                    clearFakes();
+                }
+            }, 2000);
         }
     }, waitTime);
 }
-
+function handleGameClick(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    const fakeBtn = e.target.closest('.fake-btn');
+    if (fakeBtn) {
+        handleBluff(fakeBtn);
+        return;
+    }
+    
+    handleReaction(e);
+}
 function handleReaction(e) {
     e.preventDefault();
     e.stopPropagation();
